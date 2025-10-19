@@ -1,8 +1,30 @@
 <?php
-// if the form is submitted, process the input
+session_start();
+
+// define stored credentials
+$stored_username = "admin";
+$stored_hash = password_hash("pizza123", PASSWORD_DEFAULT);
+
+// logout functionality
+if (isset($_GET["logout"])) {
+    session_unset();
+    session_destroy();
+    echo "<h3>You have been logged out.</h3>";
+}
+
+// login functionality
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
-    echo "<h3>Hello, " . htmlspecialchars($username) . "!</h3>";
+    $password = $_POST["password"];
+
+    if ($username === $stored_username && password_verify($password, $stored_hash)) {
+        $_SESSION["username"] = $username;
+        echo "<h2>✅ Welcome, " . htmlspecialchars($username) . "!</h2>";
+        echo "<a href='?logout=true'>Logout</a>";
+        exit;
+    } else {
+        echo "<p style='color:red;'>❌ Incorrect username or password!</p>";
+    }
 }
 ?>
 
@@ -10,13 +32,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Simple PHP Form</title>
+    <title>Simple PHP Login</title>
 </head>
 <body>
-    <h2>Enter your name</h2>
+<?php if (!isset($_SESSION["username"])): ?>
+    <h2>Login</h2>
     <form method="post" action="">
-        <input type="text" name="username" placeholder="Type your name">
-        <input type="submit" value="Submit">
+        Username: <input type="text" name="username" required><br><br>
+        Password: <input type="password" name="password" required><br><br>
+        <input type="submit" value="Login">
     </form>
+<?php else: ?>
+    <h2>Welcome, <?php echo htmlspecialchars($_SESSION["username"]); ?>!</h2>
+    <a href="?logout=true">Logout</a>
+<?php endif; ?>
 </body>
 </html>
