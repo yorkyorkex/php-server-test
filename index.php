@@ -2,8 +2,8 @@
 session_start();
 
 // define stored credentials
-$stored_username = "admin";
-$stored_hash = password_hash("pizza123", PASSWORD_DEFAULT);
+$stored_username = "1111";
+$stored_hash = password_hash("1111", PASSWORD_DEFAULT);
 
 // logout functionality
 if (isset($_GET["logout"])) {
